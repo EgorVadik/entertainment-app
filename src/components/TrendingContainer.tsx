@@ -1,14 +1,32 @@
-import { Category, Movie, MovieData, Tv, TvData } from '@/types/types'
+import { Category, MovieData, TvData } from '@/types/types'
 import TrendingCard from './TrendingCard'
+import LoginAlert from './LoginAlert'
+import { useState } from 'react'
+import { useSession } from 'next-auth/react'
 
 type props = {
     data: TvData & MovieData
 }
 
 function TrendingContainer({ data }: props) {
+    const { data: session } = useSession()
+    const [invalid, setInvalid] = useState(false)
+
+    function sleep(ms: number) {
+        return new Promise((resolve) => setTimeout(resolve, ms))
+    }
+
+    const updateInvalid = () => {
+        if (session === null) {
+            setInvalid(true)
+            sleep(4000).then(() => setInvalid(false))
+            return
+        }
+    }
     return (
         <>
             <h1 className='text-3xl pt-10 py-5'>Trending</h1>
+            {invalid && <LoginAlert />}
             <div className='carousel p-4 space-x-4'>
                 {data !== undefined &&
                     data.results !== undefined &&
@@ -17,6 +35,7 @@ function TrendingContainer({ data }: props) {
                             key={movie.id}
                             id={movie.id}
                             ageRating={'E'}
+                            updateInvalid={updateInvalid}
                             imgUrl={movie.backdrop_path || movie.poster_path}
                             // @ts-ignore
                             title={movie.name ?? movie.title}

@@ -10,9 +10,18 @@ type props = {
     title: string
     ageRating: string
     imgUrl: string
+    updateInvalid?: () => void
 }
 
-function TrendingCard({ ageRating, imgUrl, title, type, year, id }: props) {
+function TrendingCard({
+    ageRating,
+    imgUrl,
+    title,
+    type,
+    year,
+    id,
+    updateInvalid,
+}: props) {
     return (
         <Link
             href={`/details/${id}?category=${type}`}
@@ -25,6 +34,7 @@ function TrendingCard({ ageRating, imgUrl, title, type, year, id }: props) {
                     className='absolute top-3 right-3 hover:bg-gray-600/50 bg-black/30 rounded-full w-9 h-9 z-20'
                     onClick={async (e) => {
                         e.preventDefault()
+                        updateInvalid && updateInvalid()
                         await addBookmark(
                             id,
                             type,

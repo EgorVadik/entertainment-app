@@ -3,6 +3,8 @@ import { addBookmark, removeBookmark } from '@/utils/addBookmark'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { useSession } from 'next-auth/react'
+import { useEffect, useState } from 'react'
 
 type props = {
     id: number
@@ -12,6 +14,7 @@ type props = {
     ageRating: string
     imgUrl: string
     isBookmarked?: boolean
+    updateInvalid?: () => void
 }
 
 function MovieCard({
@@ -22,9 +25,9 @@ function MovieCard({
     year,
     id,
     isBookmarked = false,
+    updateInvalid,
 }: props) {
     const router = useRouter()
-
     return (
         <Link
             href={`/details/${id}?category=${type}`}
@@ -37,6 +40,7 @@ function MovieCard({
                 }`}
                 onClick={async (e) => {
                     e.preventDefault()
+                    updateInvalid && updateInvalid()
                     if (isBookmarked) {
                         await removeBookmark(id)
                         router.refresh()

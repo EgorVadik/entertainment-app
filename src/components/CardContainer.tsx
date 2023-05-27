@@ -1,7 +1,9 @@
 import { Category, MovieData, TvData } from '@/types/types'
 import MovieCard from './MovieCard'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import BackBtn from './BackBtn'
+import { useSession } from 'next-auth/react'
+import LoginAlert from './LoginAlert'
 
 type props = {
     data: TvData | MovieData
@@ -24,6 +26,21 @@ function CardContainer({
     isGenre,
     loading,
 }: props) {
+    const { data: session } = useSession()
+    const [invalid, setInvalid] = useState(false)
+
+    function sleep(ms: number) {
+        return new Promise((resolve) => setTimeout(resolve, ms))
+    }
+
+    const updateInvalid = () => {
+        if (session === null) {
+            setInvalid(true)
+            sleep(4000).then(() => setInvalid(false))
+            return
+        }
+    }
+
     useEffect(() => {
         if (isGenre) return
         if (page! >= 2) loadMore!(page!)
@@ -36,6 +53,7 @@ function CardContainer({
                 {isGenre && <BackBtn />}
                 <h1 className='text-3xl py-10'>{title}</h1>
             </div>
+            {invalid && <LoginAlert />}
             <div className='grid lg:grid-cols-4 md:grid-cols-3 grid-cols-1 gap-x-5 gap-y-7'>
                 {data !== undefined &&
                     data.results !== undefined &&
@@ -44,6 +62,7 @@ function CardContainer({
                             key={movie.id}
                             id={movie.id}
                             ageRating={'E'}
+                            updateInvalid={updateInvalid}
                             imgUrl={movie.backdrop_path || movie.poster_path}
                             // @ts-ignore
                             title={movie.title ?? movie.name}
