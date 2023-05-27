@@ -10,6 +10,9 @@ export const metadata = {
     title: 'Trending Movies/Tv-Series',
     description:
         "Discover the most popular and talked-about movies and TV series that are making waves around the world. Whether you're looking for action, comedy, drama, horror, romance, or anything in between, you'll find something to suit your taste and mood. Browse the latest trailers, ratings, reviews, and recommendations to find your next binge-worthy obsession.",
+    icons: {
+        icon: '/icons/logo.svg',
+    },
 }
 
 export default async function RootLayout({
