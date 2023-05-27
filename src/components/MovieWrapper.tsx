@@ -1,25 +1,21 @@
 'use client'
-import { Movie, MovieData, Tv, TvData } from '@/types/types'
-import CardContainer from './CardContainer'
+import { MovieData } from '@/types/types'
 import SearchBar from './SearchBar'
-import TrendingContainer from './TrendingContainer'
 import { useEffect, useState } from 'react'
-import useDebounce from '@/hooks/useDebounce'
+import CardContainer from './CardContainer'
 import useSearch from '@/hooks/useSearch'
 
 type props = {
-    trending: TvData & MovieData
-    popularMovies: MovieData
-    popularTv: TvData
+    movies: MovieData
 }
 
-function Wrapper({ popularMovies, popularTv, trending }: props) {
+function MovieWrapper({ movies }: props) {
     const [search, setSearch] = useState('')
     const [searchPage, setSearchPage] = useState(1)
     const { hasNextPage, searchData, loadNextPage } = useSearch(
         searchPage,
         search,
-        'multi'
+        'movie'
     )
 
     useEffect(() => {
@@ -48,17 +44,10 @@ function Wrapper({ popularMovies, popularTv, trending }: props) {
                     hasNext={hasNextPage}
                 />
             ) : (
-                <>
-                    <TrendingContainer data={trending} />
-                    <CardContainer
-                        data={popularMovies}
-                        title='Popular Movies'
-                    />
-                    <CardContainer data={popularTv} title='Popular Tv Series' />
-                </>
+                <CardContainer data={movies} title='Trending Movies' />
             )}
         </>
     )
 }
 
-export default Wrapper
+export default MovieWrapper

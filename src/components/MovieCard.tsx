@@ -1,18 +1,50 @@
 import { Category } from '@/types/types'
+import { addBookmark, removeBookmark } from '@/utils/addBookmark'
 import Image from 'next/image'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
 type props = {
+    id: number
     type: Category
     year: number
     title: string
     ageRating: string
     imgUrl: string
+    isBookmarked?: boolean
 }
 
-function MovieCard({ ageRating, imgUrl, title, type, year }: props) {
+function MovieCard({
+    ageRating,
+    imgUrl,
+    title,
+    type,
+    year,
+    id,
+    isBookmarked = false,
+}: props) {
+    const router = useRouter()
+
     return (
-        <div className='rounded-xl relative'>
-            <button className='absolute top-3 right-3 bg-black/30 rounded-full w-9 h-9'>
+        <Link
+            href={`/details/${id}?category=${type}`}
+            prefetch={false}
+            className='rounded-xl relative'
+        >
+            <button
+                className={`absolute top-3 right-3 hover:bg-gray-600/50 bg-black/30 rounded-full w-9 h-9 ${
+                    isBookmarked && 'bg-red-500/60'
+                }`}
+                onClick={async (e) => {
+                    e.preventDefault()
+                    if (isBookmarked) {
+                        await removeBookmark(id)
+                        router.refresh()
+                        return
+                    }
+                    await addBookmark(id, type, year, title, ageRating, imgUrl)
+                }}
+            >
                 <Image
                     src={'/icons/icon-bookmark-empty.svg'}
                     alt='Bookmark'
@@ -29,7 +61,7 @@ function MovieCard({ ageRating, imgUrl, title, type, year }: props) {
                 className='w-full h-[150px] object-cover rounded-xl'
                 // sizes='60%'
             />
-            <div className=''>
+            <div>
                 <div className='flex items-center gap-2 text-sm text-[#556588]'>
                     <p>{year}</p>
                     <Image
@@ -49,7 +81,7 @@ function MovieCard({ ageRating, imgUrl, title, type, year }: props) {
                 </div>
                 <p className='text-white font-bold'>{title}</p>
             </div>
-        </div>
+        </Link>
     )
 }
 

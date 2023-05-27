@@ -2,11 +2,9 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url)
-    const search = searchParams.get('search')
-    const page = searchParams.get('page')
     const category = searchParams.get('category')
-
-    const url = `https://api.themoviedb.org/3/search/${category}?query=${search}&include_adult=false&language=en-US&page=${page}`
+    const genreId = searchParams.get('genreId')
+    const page = searchParams.get('page')
 
     const options = {
         method: 'GET',
@@ -15,13 +13,16 @@ export async function GET(req: NextRequest) {
             Authorization: process.env.AUTH_TOKEN!,
         },
         next: {
-            revalidate: 0,
+            revalidate: 3600,
         },
     }
-    let data: any | null
+
+    const url = `https://api.themoviedb.org/3/discover/${category}?language=en-US&with_genres=${genreId}&sort_by=popularity.desc&page=${page}`
+
+    let newData: any | null
     try {
-        data = await fetch(url, options).then((res) => res.json())
+        newData = await fetch(url, options).then((res) => res.json())
     } catch (error) {}
 
-    return NextResponse.json({ data })
+    return NextResponse.json({ newData })
 }

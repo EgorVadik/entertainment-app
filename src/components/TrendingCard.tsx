@@ -1,7 +1,10 @@
+import Link from 'next/link'
 import { Category } from '@/types/types'
 import Image from 'next/image'
+import { addBookmark } from '@/utils/addBookmark'
 
 type props = {
+    id: number
     type: Category
     year: number
     title: string
@@ -9,12 +12,29 @@ type props = {
     imgUrl: string
 }
 
-function TrendingCard({ ageRating, imgUrl, title, type, year }: props) {
+function TrendingCard({ ageRating, imgUrl, title, type, year, id }: props) {
     return (
-        <div className='rounded-xl relative carousel-item group'>
+        <Link
+            href={`/details/${id}?category=${type}`}
+            prefetch={false}
+            className='rounded-xl relative carousel-item group'
+        >
             <div className='w-full h-full bg-black/40 md:bg-black/20 md:group-hover:bg-black/50 absolute z-10 rounded-xl'></div>
             <div className='relative'>
-                <button className='absolute top-3 right-3 bg-black/30 rounded-full w-9 h-9 z-20'>
+                <button
+                    className='absolute top-3 right-3 hover:bg-gray-600/50 bg-black/30 rounded-full w-9 h-9 z-20'
+                    onClick={async (e) => {
+                        e.preventDefault()
+                        await addBookmark(
+                            id,
+                            type,
+                            year,
+                            title,
+                            ageRating,
+                            imgUrl
+                        )
+                    }}
+                >
                     <Image
                         src={'/icons/icon-bookmark-empty.svg'}
                         alt='Bookmark'
@@ -29,7 +49,7 @@ function TrendingCard({ ageRating, imgUrl, title, type, year }: props) {
                     width={200}
                     height={150}
                     className='w-full h-[150px] object-cover rounded-xl'
-                    sizes='100%'
+                    // sizes='100%'
                 />
                 <div className='absolute bottom-1 left-2 z-20'>
                     <div className='flex items-center gap-2 text-sm text-white'>
@@ -52,7 +72,7 @@ function TrendingCard({ ageRating, imgUrl, title, type, year }: props) {
                     <p className='text-white font-bold'>{title}</p>
                 </div>
             </div>
-        </div>
+        </Link>
     )
 }
 
