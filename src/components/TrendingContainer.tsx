@@ -48,8 +48,11 @@ function TrendingContainer({ data }: props) {
                             year={
                                 movie.first_air_date
                                     ? Number(movie.first_air_date.split('-')[0])
-                                    : // @ts-ignore
-                                      Number(movie.release_date.split('-')[0])
+                                    : Number(
+                                          // @ts-ignore
+                                          movie.release_date?.split('-')[0] ??
+                                              2023
+                                      )
                             }
                         />
                     ))}
